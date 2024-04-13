@@ -21,6 +21,7 @@ services:
     build: .
     command: bash -c "cd banner_service/ &&
                       python manage.py migrate &&  
+                      sh /code/run_sql_script.sh &&
                       gunicorn banner_service.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code
