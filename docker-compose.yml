@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bannerdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  django:
+    build: .
+    command: bash -c "cd banner_service/ &&
+                      python manage.py migrate &&  
+                      gunicorn banner_service.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: .
+    command: celery -A banner_service worker -l INFO -P eventlet
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+    working_dir: /code/banner_service
+
+  celery-beat:
+    build: .
+    command: celery -A banner_service beat -l INFO
+    volumes:
+      - .:/code
+    depends_on:
+      - celery
+      - redis
+    working_dir: /code/banner_service
+
+volumes:
+  postgres_data:
