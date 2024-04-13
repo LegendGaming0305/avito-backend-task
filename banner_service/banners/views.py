@@ -140,7 +140,7 @@ class BannerIdView(APIView):
                 serializer.save()
             except IntegrityError:
                 pass
-
+            
             is_active = not serializer.validated_data.get('is_active')
             Banner.objects.filter(uuid=serializer.data['uuid']).update(is_active=is_active)
 
@@ -172,3 +172,30 @@ class BannerIdVersionView(APIView):
         banner = Banner.objects.get(id=id, uuid=uuid)
         serializer = BannerSerializer(banner)
         return Response(data=serializer.data)
+    
+    def patch(self, request, id, uuid):
+        active_banner = Banner.objects.values('uuid').get(id=id, is_active=True)
+        banner = get_object_or_404(Banner.objects.filter(id=id, uuid=uuid))
+        serializer = BannerSerializer(banner, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            try:
+                serializer.save()
+            except IntegrityError:
+                pass
+            
+            is_active = not serializer.validated_data.get('is_active')
+            Banner.objects.filter(uuid=active_banner.get('uuid')).update(is_active=is_active)
+
+            patched_banner = Banner.objects.filter(id=id).order_by('-updated_at').first()
+
+            tag_ids = request.data.get('tag_ids', [])
+            for tag_id in tag_ids:
+                try:
+                    tag = get_object_or_404(Tag, id=tag_id)
+                    patched_banner.tag_id.add(tag)
+                except NotFound:
+                    raise
+            return Response(data={'description': 'OK'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
