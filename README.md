@@ -10,7 +10,7 @@
     docker-compose up
 ### В командной строке/терминале вводим 
     docker exec -it {id docker container with django} sh
-![alt text](image-1.png)
+![alt text](image-3.png)
 ### Далее пишем 
     PGPASSWORD=12345 psql -h db -p 5432 -U postgres -d bannerdb -f /code/init_triggers.sql
 ![alt text](image-2.png)
