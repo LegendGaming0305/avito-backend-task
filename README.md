@@ -3,16 +3,16 @@
 ## Запуск:
 Важно выполнить два последних пункта для версионности баннеров и работы всего функционала!
 ### Клонирование репозитория
-    ```git clone https://github.com/LegendGaming0305/avito-backend-task.git```
+    git clone https://github.com/LegendGaming0305/avito-backend-task.git
 ### Билд docker-compose
-    ```docker-compose build```
+    docker-compose build
 ### Поднятие контейнера (может выдать ошибку на первом запуске, тогда остановить и заново запустить docker-compose up), но лучше все равно перезапустить после первого запуска
-    ```docker-compose up```
+    docker-compose up
 ### В командной строке/терминале вводим 
-    ```docker exec -it {id docker container with django} sh```
+    docker exec -it {id docker container with django} sh
 ![alt text](image-1.png)
 ### Далее пишем 
-    ```PGPASSWORD=12345 psql -h db -p 5432 -U postgres -d bannerdb -f /code/init_triggers.sql``
+    PGPASSWORD=12345 psql -h db -p 5432 -U postgres -d bannerdb -f /code/init_triggers.sql
 ![alt text](image-2.png)
 
 ## Описание функций и взаимодействия с API:
