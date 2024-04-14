@@ -13,7 +13,5 @@ RUN pip install -r requirements.txt
 
 COPY . /code/
 
-COPY init_triggers.sql /code/
-COPY run_sql_script.sh /code/run_sql_script.sh
 
 EXPOSE 8000
